@@ -2,9 +2,13 @@ FROM fedora:latest
 MAINTAINER Herve Meftah <rv.meftah@gmail.com>
 
 # common packages
-RUN yum -y update; yum clean all
-RUN yum -y install epel-release; yum clean all
+RUN yum -y update
+RUN yum -y install @development-tools
 
+RUN yum -y install python-devel
+RUN yum -y install python-pip
+
+RUN pip install fabric
 
 # install sshd
 RUN yum -y install openssh-server net-tools wget ; yum clean all
