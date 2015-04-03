@@ -4,12 +4,7 @@ MAINTAINER Herve Meftah <rv.meftah@gmail.com>
 # common packages
 RUN yum -y update; yum clean all
 RUN yum -y install sudo epel-release; yum clean all
-RUN yum -y htop; yum clean all
-RUN yum -y groupinstall "Development Tools"
 
-#install fabric
-yum -y install python-pip ; yum clean all
-RUN pip install fabric
 
 # install sshd
 RUN yum -y install openssh-server net-tools wget ; yum clean all
