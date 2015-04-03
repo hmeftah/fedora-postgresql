@@ -3,7 +3,7 @@ MAINTAINER Herve Meftah <rv.meftah@gmail.com>
 
 # common packages
 RUN yum -y update; yum clean all
-RUN yum -y install sudo epel-release; yum clean all
+RUN yum -y install epel-release; yum clean all
 
 
 # install sshd
