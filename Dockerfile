@@ -6,10 +6,6 @@ MAINTAINER Herve Meftah <rv.meftah@gmail.com>
 RUN yum -y update
 RUN yum -y install @development-tools
 
-RUN yum -y install python-devel
-RUN yum -y install python-pip
-
-RUN pip install fabric
 
 # install extra packages for compiling postgresql as production-like server
 RUN yum -y install tar systemtap-sdt-devel readline-devel zlib-devel openssl-devel
@@ -22,17 +18,8 @@ RUN echo "root:password" | chpasswd
 RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
 RUN sed -i 's/session   required        pam_loginuid.so/session         optional        pam_loginuid.so/g' /etc/pam.d/sshd
 
-# add user
-RUN adduser doc
-RUN echo 'doc:doc' | chpasswd
-
-# use fabric
-#RUN /usr/sbin/sshd
-#RUN mkdir -p /home/environment
-#ADD fabfile.py /home/environment/fabfile.py
-#RUN cd /home/environment
-#RUN /bin/fab -f /home/environment/fabfile.py localhost install_postgresql
 
 EXPOSE 22
+EXPOSE 5432
 
 ENTRYPOINT ["/usr/sbin/sshd", "-D"]

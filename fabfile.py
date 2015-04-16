@@ -11,7 +11,7 @@ working_path = os.getcwd()
 
 def localhost():
 	env.hosts ='localhost' 
-	env.port = 49160
+	env.port = 49160   # port number set when starting your fedora docker container
 	env.user ='root' 
 	env.password = 'password'
 
@@ -27,6 +27,9 @@ def get_os_version():
 		return version
 
 def install_postgresql():
+	''' compile postgresql from sources as production-like server 
+	    flags has been set to allow openssl, selinux python and dtrace entries within the server
+	'''
 	with hide('running','warnings'), settings (warn_only=True):
 		''' Compile the latest version of postgresql'''
 	        start_time = datetime.datetime.now()	
@@ -51,27 +54,27 @@ def install_postgresql():
                 print "Elapsed time : %s " % (end_time-start_time)
 
 def init_postgresql():
+	''' Create postgresql database, set character set encoding and data directory
+	    set start up script		        
+	'''
 	with hide('running','warnings'), settings (warn_only=True):
-		sudo ('/etc/init.d/postgresql stop',  user='root', shell = False)
-                """Create postgresql database, set character set encoding and data directory
-                   change startup script"""
+		run ('/etc/init.d/postgresql stop',  user='root', shell = False)
 		postgres = sudo('cat /etc/passwd | grep postgres', user='root', shell = False )
-		sudo('adduser postgres', user='root', shell = False)
-		sudo('mkdir /opt/pgsql/data -p' , user='root', shell = False)
-		sudo('chown postgres /opt/pgsql/data', user='root', shell = False)	
-		sudo("/usr/local/pgsql/bin/initdb --encoding=UTF8 --locale=en_US.UTF-8 \
+		run ('adduser postgres', user='root', shell = False)
+		run ('mkdir /opt/pgsql/data -p' , user='root', shell = False)
+		run ('chown postgres:postgresl /opt/pgsql/data', user='root', shell = False)	
+		run ("/usr/local/pgsql/bin/initdb  -E unicode -k \
 		      -D /opt/pgsql/data", user='postgres' ,shell= False)
 		sed('/etc/init.d/postgresql', 'PGDATA="/usr/local/pgsql/data"', 'PGDATA="/opt/pgsql/data/"', 
                      use_sudo=True, shell=False)
 		result  = execute(get_os_version)
                 version = result.get(env.host_string)
                 if version.find('Ubuntu') >0 :
-                        sudo("/etc/init.d/postgesql restart",  user='root', shell = False)
+                        run("/etc/init.d/postgesql restart",  user='root', shell = False)
                 elif version.find('Fedora')>0:
-                        sudo('systemctl enable postgresql.service' ,user='root' , shell = False)
-			sudo('systemctl start postgresql.service' ,user='root' , shell = False)
-                run('date')
-		sudo ('/etc/init.d/postgresql start')
+                        run('systemctl enable postgresql.service' ,user='root' , shell = False)
+			run('systemctl start postgresql.service' ,user='root' , shell = False)
+		run ('/etc/init.d/postgresql start')
 		
 
 def set_UTC_timezone():
