@@ -5,7 +5,7 @@ MAINTAINER Herve Meftah <rv.meftah@gmail.com>
 # common packages
 RUN yum -y update
 RUN yum -y install @development-tools
-
+RUN yum -y install sudo htop
 
 # install extra packages for compiling postgresql as production-like server
 RUN yum -y install tar systemtap-sdt-devel readline-devel zlib-devel openssl-devel

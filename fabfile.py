@@ -58,23 +58,15 @@ def init_postgresql():
 	    set start up script		        
 	'''
 	with hide('running','warnings'), settings (warn_only=True):
-		run ('/etc/init.d/postgresql stop',  user='root', shell = False)
-		postgres = sudo('cat /etc/passwd | grep postgres', user='root', shell = False )
-		run ('adduser postgres', user='root', shell = False)
-		run ('mkdir /opt/pgsql/data -p' , user='root', shell = False)
-		run ('chown postgres:postgresl /opt/pgsql/data', user='root', shell = False)	
-		run ("/usr/local/pgsql/bin/initdb  -E unicode -k \
-		      -D /opt/pgsql/data", user='postgres' ,shell= False)
+		run ('adduser postgres')
+		run ('mkdir /opt/pgsql/data -p')
+		run ('chown -R postgres:postgres /opt/pgsql')	
+		sudo ("/opt/postgresql/bin/initdb  -E unicode -k -D /opt/pgsql/data", user='postgres', shell= False) 
 		sed('/etc/init.d/postgresql', 'PGDATA="/usr/local/pgsql/data"', 'PGDATA="/opt/pgsql/data/"', 
                      use_sudo=True, shell=False)
 		result  = execute(get_os_version)
                 version = result.get(env.host_string)
-                if version.find('Ubuntu') >0 :
-                        run("/etc/init.d/postgesql restart",  user='root', shell = False)
-                elif version.find('Fedora')>0:
-                        run('systemctl enable postgresql.service' ,user='root' , shell = False)
-			run('systemctl start postgresql.service' ,user='root' , shell = False)
-		run ('/etc/init.d/postgresql start')
+		sudo('/opt/postgresql/bin/postgres -D /opt/pgsql/data & ',  user='postgres', shell= False)
 		
 
 def set_UTC_timezone():
