@@ -50,6 +50,7 @@ def install_postgresql():
 		
 		run('cd /home/environment/build/postgresql-9.4.1/contrib/start-scripts && cp linux /etc/init.d/postgresql')
 		run('cd  /etc/init.d/ && chmod +x postgresql')
+		run('ln -s /opt/pg941 /opt/postgresql')
 		end_time =  datetime.datetime.now()
                 print "Elapsed time : %s " % (end_time-start_time)
 
@@ -64,7 +65,6 @@ def init_postgresql():
 		sudo ("/opt/postgresql/bin/initdb  -E unicode -k -D /opt/pgsql/data", user='postgres', shell= False) 
 		sed('/etc/init.d/postgresql', 'PGDATA="/usr/local/pgsql/data"', 'PGDATA="/opt/pgsql/data/"', 
                      use_sudo=True, shell=False)
-		result  = execute(get_os_version)
                 version = result.get(env.host_string)
 		sudo('/opt/postgresql/bin/postgres -D /opt/pgsql/data & ',  user='postgres', shell= False)
 		
